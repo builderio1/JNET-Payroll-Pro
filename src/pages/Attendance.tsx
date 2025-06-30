@@ -151,8 +151,8 @@ const columns: Column[] = [
     key: "name",
     label: "Name",
     render: (value, row) => (
-      <div className="flex items-center gap-3">
-        <Avatar className="h-8 w-8">
+      <div className="flex items-center gap-2 min-w-0">
+        <Avatar className="h-7 w-7">
           <AvatarImage src={`/placeholder-avatar-${row.empId}.jpg`} />
           <AvatarFallback>
             {value
@@ -161,9 +161,13 @@ const columns: Column[] = [
               .join("")}
           </AvatarFallback>
         </Avatar>
-        <div>
-          <div className="font-medium">{value}</div>
-          <div className="text-sm text-slate-500">{row.designation}</div>
+        <div className="min-w-0">
+          <div className="font-medium text-sm truncate leading-tight">
+            {value}
+          </div>
+          <div className="text-xs text-slate-500 truncate leading-tight max-w-[120px]">
+            {row.designation}
+          </div>
         </div>
       </div>
     ),
@@ -293,13 +297,13 @@ export default function Attendance() {
   // Calculate stats
   const totalEmployees = mockAttendanceData.length;
   const presentEmployees = mockAttendanceData.filter(
-    (emp) => emp.daysPresent >= emp.totalWorkingDays * 0.9,
+    (emp) => emp.daysPresent >= emp.totalWorkingDays * 0.9
   ).length;
   const avgAttendance =
     mockAttendanceData.reduce((sum, emp) => sum + emp.attendancePercentage, 0) /
     totalEmployees;
   const lateArrivals = mockAttendanceData.filter(
-    (emp) => emp.attendancePercentage < 90,
+    (emp) => emp.attendancePercentage < 90
   ).length;
 
   return (

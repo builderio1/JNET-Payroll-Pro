@@ -209,7 +209,7 @@ function AnimatedRoutes() {
             }
           />
           <Route
-            path="payroll"
+            path="payroll-runs"
             element={
               <motion.div
                 initial="initial"

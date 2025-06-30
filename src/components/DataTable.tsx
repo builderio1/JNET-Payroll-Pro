@@ -170,9 +170,9 @@ export function DataTable({
     }));
   };
 
-  // Enhanced Card View with better visual hierarchy
+  // Card View with two-column info grid and actions fixed to right end
   const CardView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
       <AnimatePresence>
         {sortedData.map((row, index) => (
           <motion.div
@@ -180,32 +180,34 @@ export function DataTable({
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            whileHover={{ scale: 1.02, y: -4 }}
-            transition={{ duration: 0.2, delay: index * 0.05 }}
+            whileHover={{ scale: 1.02, y: -2 }}
+            transition={{ duration: 0.2, delay: index * 0.03 }}
           >
-            <Card className="relative overflow-hidden group h-full bg-gradient-to-br from-card to-card/80 border-0 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-2xl">
-              {/* Background gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Card className="relative overflow-hidden group h-full bg-gradient-to-br from-card/95 to-card/90 border border-border/20 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col">
+              {/* Subtle background gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-transparent to-accent/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              {/* Card header with avatar/icon */}
-              <CardHeader className="relative pb-2">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    {cardImageKey && row[cardImageKey] ? (
-                      <div className="relative">
-                        <div className="w-10 h-10 bg-gradient-primary rounded-2xl flex items-center justify-center text-white font-bold text-base shadow-lg">
+              {/* Card Content */}
+              <div className="relative p-3 h-full flex flex-col flex-1">
+                {/* Header Section */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                    {/* Avatar/Icon */}
+                    <div className="relative flex-shrink-0">
+                      {cardImageKey && row[cardImageKey] ? (
+                        <div className="w-9 h-9 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center text-white font-semibold text-sm shadow-sm">
                           {row[cardImageKey]}
                         </div>
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-success rounded-2xl border-2 border-background shadow-sm" />
-                      </div>
-                    ) : (
-                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center text-white font-bold text-base shadow-lg">
-                        {row[columns[0]?.key]?.toString().charAt(0) || "?"}
-                      </div>
-                    )}
-
+                      ) : (
+                        <div className="w-9 h-9 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+                          {row[columns[0]?.key]?.toString().charAt(0) || "?"}
+                        </div>
+                      )}
+                      {/* Status indicator */}
+                      <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-gradient-success rounded-full border border-background shadow-sm" />
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-base text-foreground truncate group-hover:text-primary transition-colors">
+                      <h3 className="font-semibold text-base text-foreground truncate group-hover:text-primary transition-colors">
                         {cardTitleKey
                           ? row[cardTitleKey]
                           : row[columns[0]?.key] || "Untitled"}
@@ -217,95 +219,154 @@ export function DataTable({
                       )}
                     </div>
                   </div>
-
-                  {/* Status indicator */}
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-gradient-success rounded-2xl animate-pulse" />
-                    <Badge variant="secondary" className="text-xs rounded-2xl">
+                  <div className="flex-shrink-0 ml-2">
+                    <Badge
+                      variant="secondary"
+                      className="text-xs px-2 py-0.5 rounded-lg bg-success/10 text-success border-success/20"
+                    >
                       Active
                     </Badge>
                   </div>
                 </div>
-              </CardHeader>
 
-              <CardContent className="relative pt-0">
-                {/* Key metrics in grid */}
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  {columns.slice(1, 5).map((column) => (
-                    <div
-                      key={column.key}
-                      className="p-2 rounded-2xl bg-muted/30 hover:bg-muted/50 transition-colors"
-                    >
-                      <div className="text-xs text-muted-foreground mb-1 font-medium uppercase tracking-wide">
-                        {column.label}
+                {/* Info Grid Section */}
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-2 text-sm">
+                  {/* Left column */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 bg-gradient-primary rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                        {row[columns[0]?.key]?.toString().charAt(0) || "?"}
                       </div>
-                      <div className="text-sm font-semibold text-foreground truncate">
-                        {column.render
-                          ? column.render(row[column.key], row)
-                          : row[column.key]}
+                      <div className="min-w-0">
+                        <div className="font-medium truncate">
+                          {row[cardTitleKey] || row[columns[0]?.key]}
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          Employee
+                        </div>
                       </div>
                     </div>
-                  ))}
+                    <div className="flex items-center gap-2">
+                      <svg
+                        className="w-4 h-4 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M17.657 16.657L13.414 20.9a2 2 0 0 1-2.828 0l-4.243-4.243a8 8 0 1 1 11.314 0z" />
+                        <circle cx="12" cy="11" r="3" />
+                      </svg>
+                      <span className="font-semibold truncate">
+                        {row.location ||
+                          row[
+                            columns.find((c) =>
+                              c.label.toLowerCase().includes("location")
+                            )?.key
+                          ]}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Right column */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-primary mr-1" />
+                      <div className="min-w-0">
+                        <div className="font-medium truncate">
+                          {row.department ||
+                            row[
+                              columns.find((c) =>
+                                c.label.toLowerCase().includes("department")
+                              )?.key
+                            ]}
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          Department
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <svg
+                        className="w-4 h-4 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M4 4h16v16H4z" />
+                        <path d="M22 6l-10 7L2 6" />
+                      </svg>
+                      <span className="font-semibold truncate">
+                        {row.email ||
+                          row[
+                            columns.find((c) =>
+                              c.label.toLowerCase().includes("email")
+                            )?.key
+                          ]}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Progress indicators for relevant data */}
+                {/* Progress Bar */}
                 {row.progress && (
-                  <div className="mb-3">
+                  <div className="mb-2">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground font-medium">
                         Progress
                       </span>
-                      <span className="text-xs font-semibold">
+                      <span className="text-xs font-semibold text-foreground">
                         {row.progress}%
                       </span>
                     </div>
-                    <div className="w-full bg-muted rounded-2xl h-1.5">
+                    <div className="w-full bg-muted/50 rounded-full h-1.5 overflow-hidden">
                       <div
-                        className="bg-gradient-primary h-1.5 rounded-2xl transition-all duration-300"
+                        className="bg-gradient-to-r from-primary to-accent h-1.5 rounded-full transition-all duration-300"
                         style={{ width: `${row.progress}%` }}
                       />
                     </div>
                   </div>
                 )}
 
-                {/* Action buttons */}
+                {/* Actions fixed to right end */}
                 {(onView || onEdit || onDelete) && (
-                  <div className="flex gap-2 pt-2 border-t border-border/50">
+                  <div className="flex justify-end gap-2 pt-2 border-t border-border/30 mt-auto">
                     {onView && (
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="icon"
                         onClick={() => onView(row)}
-                        className="flex-1 h-8 hover:bg-primary/10 hover:text-primary transition-all text-xs rounded-2xl"
+                        className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-all rounded-lg font-medium"
+                        title="View"
                       >
-                        <Eye className="h-3 w-3 mr-1" />
-                        View
+                        <Eye className="h-4 w-4" />
                       </Button>
                     )}
                     {onEdit && (
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="icon"
                         onClick={() => onEdit(row)}
-                        className="flex-1 h-8 hover:bg-warning/10 hover:text-warning transition-all text-xs rounded-2xl"
+                        className="h-8 w-8 hover:bg-warning/10 hover:text-warning transition-all rounded-lg font-medium"
+                        title="Edit"
                       >
-                        <Edit className="h-3 w-3 mr-1" />
-                        Edit
+                        <Edit className="h-4 w-4" />
                       </Button>
                     )}
                     {onDelete && (
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="icon"
                         onClick={() => onDelete(row)}
-                        className="h-8 hover:bg-destructive/10 hover:text-destructive transition-all text-xs rounded-2xl"
+                        className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-all rounded-lg p-0 flex-shrink-0"
+                        title="Delete"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
                 )}
-              </CardContent>
+              </div>
             </Card>
           </motion.div>
         ))}
@@ -538,6 +599,7 @@ export function DataTable({
     }
   };
 
+  // Only display Table View in DataTable
   return (
     <div className={cn("space-y-6", className)}>
       {/* Enhanced Statistics Panel */}
@@ -744,58 +806,12 @@ export function DataTable({
             </DropdownMenu>
           )}
         </div>
-
-        {/* Enhanced Actions and View Toggle */}
         <div className="flex gap-3 items-center">
-          {/* View Toggle */}
-          {enableViewToggle && (
-            <div className="flex gap-1 p-1 bg-muted/50 rounded-2xl">
-              <Button
-                variant={viewMode === "table" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("table")}
-                className="px-3 h-9 rounded-2xl"
-              >
-                <List className="h-4 w-4" />
-                <span className="hidden sm:inline ml-2">Table</span>
-              </Button>
-              <Button
-                variant={viewMode === "card" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("card")}
-                className="px-3 h-9 rounded-2xl"
-              >
-                <LayoutGrid className="h-4 w-4" />
-                <span className="hidden sm:inline ml-2">Cards</span>
-              </Button>
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className="px-3 h-9 rounded-2xl"
-              >
-                <Grid3X3 className="h-4 w-4" />
-                <span className="hidden sm:inline ml-2">Grid</span>
-              </Button>
-              <Button
-                variant={viewMode === "kanban" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("kanban")}
-                className="px-3 h-9 rounded-2xl"
-              >
-                <Layers className="h-4 w-4" />
-                <span className="hidden sm:inline ml-2">Kanban</span>
-              </Button>
-            </div>
-          )}
-
           <Separator orientation="vertical" className="h-8" />
-
           <Button variant="outline" size="sm" className="gap-2 h-9 rounded-2xl">
             <Download className="h-4 w-4" />
             <span className="hidden sm:inline">Export</span>
           </Button>
-
           {onAdd && (
             <Button
               onClick={onAdd}
@@ -810,194 +826,160 @@ export function DataTable({
         </div>
       </div>
 
-      {/* Content Area with enhanced animations */}
-      <AnimatePresence mode="wait">
-        {viewMode === "card" ? (
-          <motion.div
-            key="card"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <CardView />
-          </motion.div>
-        ) : viewMode === "grid" ? (
-          <motion.div
-            key="grid"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <GridView />
-          </motion.div>
-        ) : viewMode === "kanban" ? (
-          <motion.div
-            key="kanban"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <KanbanView />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="table"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Enhanced Desktop Table */}
-            <Card className="hidden md:block border-0 shadow-xl overflow-hidden rounded-2xl">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-gradient-to-r from-muted/50 to-muted/30 hover:from-muted/60 hover:to-muted/40">
-                      {visibleColumns.map((column) => (
-                        <TableHead
-                          key={column.key}
-                          className={cn(
-                            "font-bold text-foreground h-10 cursor-pointer hover:bg-muted/50 transition-colors",
-                            column.className
-                          )}
-                          onClick={() =>
-                            column.sortable !== false && handleSort(column.key)
-                          }
-                        >
-                          <div className="flex items-center gap-2">
-                            {column.label}
-                            {column.sortable !== false && (
-                              <div className="flex flex-col">
-                                {sortBy === column.key ? (
-                                  sortOrder === "asc" ? (
-                                    <SortAsc className="h-4 w-4 text-primary" />
-                                  ) : (
-                                    <SortDesc className="h-4 w-4 text-primary" />
-                                  )
-                                ) : (
-                                  <div className="w-4 h-4 opacity-30">
-                                    <SortAsc className="h-4 w-4" />
-                                  </div>
-                                )}
+      {/* Only Table View */}
+      <motion.div
+        key="table"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.3 }}
+      >
+        {/* Enhanced Desktop Table */}
+        <Card className="hidden md:block border-0 shadow-xl overflow-hidden rounded-2xl">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gradient-to-r from-muted/50 to-muted/30 hover:from-muted/60 hover:to-muted/40">
+                  {visibleColumns.map((column) => (
+                    <TableHead
+                      key={column.key}
+                      className={cn(
+                        "font-bold text-foreground h-10 cursor-pointer hover:bg-muted/50 transition-colors",
+                        column.className
+                      )}
+                      onClick={() =>
+                        column.sortable !== false && handleSort(column.key)
+                      }
+                    >
+                      <div className="flex items-center gap-2">
+                        {column.label}
+                        {column.sortable !== false && (
+                          <div className="flex flex-col">
+                            {sortBy === column.key ? (
+                              sortOrder === "asc" ? (
+                                <SortAsc className="h-4 w-4 text-primary" />
+                              ) : (
+                                <SortDesc className="h-4 w-4 text-primary" />
+                              )
+                            ) : (
+                              <div className="w-4 h-4 opacity-30">
+                                <SortAsc className="h-4 w-4" />
                               </div>
                             )}
                           </div>
-                        </TableHead>
+                        )}
+                      </div>
+                    </TableHead>
+                  ))}
+                  {(onView || onEdit || onDelete) && (
+                    <TableHead className="w-16 text-center sticky right-0 bg-muted/30 z-10">
+                      Actions
+                    </TableHead>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={
+                        visibleColumns.length +
+                        (onView || onEdit || onDelete ? 1 : 0)
+                      }
+                      className="text-center py-12"
+                    >
+                      <div className="flex flex-col items-center gap-4 text-muted-foreground">
+                        <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center">
+                          <Search className="h-8 w-8" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-semibold mb-1">
+                            No data found
+                          </p>
+                          <p className="text-sm">
+                            Try adjusting your search or filters
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  sortedData.map((row, index) => (
+                    <motion.tr
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="group hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition-all duration-200 border-b border-border/50"
+                    >
+                      {visibleColumns.map((column) => (
+                        <TableCell
+                          key={column.key}
+                          className={cn("py-2", column.className)}
+                        >
+                          {column.render
+                            ? column.render(row[column.key], row)
+                            : row[column.key]}
+                        </TableCell>
                       ))}
                       {(onView || onEdit || onDelete) && (
-                        <TableHead className="w-16 text-center">
-                          Actions
-                        </TableHead>
-                      )}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedData.length === 0 ? (
-                      <TableRow>
-                        <TableCell
-                          colSpan={
-                            visibleColumns.length +
-                            (onView || onEdit || onDelete ? 1 : 0)
-                          }
-                          className="text-center py-12"
-                        >
-                          <div className="flex flex-col items-center gap-4 text-muted-foreground">
-                            <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center">
-                              <Search className="h-8 w-8" />
-                            </div>
-                            <div>
-                              <p className="text-lg font-semibold mb-1">
-                                No data found
-                              </p>
-                              <p className="text-sm">
-                                Try adjusting your search or filters
-                              </p>
-                            </div>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      sortedData.map((row, index) => (
-                        <motion.tr
-                          key={index}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="group hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition-all duration-200 border-b border-border/50"
-                        >
-                          {visibleColumns.map((column) => (
-                            <TableCell
-                              key={column.key}
-                              className={cn("py-2", column.className)}
+                        <TableCell className="text-center sticky right-0 bg-background z-10">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 rounded-2xl"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="border-0 shadow-xl rounded-2xl"
                             >
-                              {column.render
-                                ? column.render(row[column.key], row)
-                                : row[column.key]}
-                            </TableCell>
-                          ))}
-                          {(onView || onEdit || onDelete) && (
-                            <TableCell className="text-center">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 rounded-2xl"
-                                  >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent
-                                  align="end"
-                                  className="border-0 shadow-xl rounded-2xl"
+                              {onView && (
+                                <DropdownMenuItem
+                                  onClick={() => onView(row)}
+                                  className="gap-2"
                                 >
-                                  {onView && (
-                                    <DropdownMenuItem
-                                      onClick={() => onView(row)}
-                                      className="gap-2"
-                                    >
-                                      <Eye className="h-4 w-4" />
-                                      View
-                                    </DropdownMenuItem>
-                                  )}
-                                  {onEdit && (
-                                    <DropdownMenuItem
-                                      onClick={() => onEdit(row)}
-                                      className="gap-2"
-                                    >
-                                      <Edit className="h-4 w-4" />
-                                      Edit
-                                    </DropdownMenuItem>
-                                  )}
-                                  {onDelete && (
-                                    <DropdownMenuItem
-                                      onClick={() => onDelete(row)}
-                                      className="gap-2 text-destructive focus:text-destructive"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                      Delete
-                                    </DropdownMenuItem>
-                                  )}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          )}
-                        </motion.tr>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </Card>
+                                  <Eye className="h-4 w-4" />
+                                  View
+                                </DropdownMenuItem>
+                              )}
+                              {onEdit && (
+                                <DropdownMenuItem
+                                  onClick={() => onEdit(row)}
+                                  className="gap-2"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                              )}
+                              {onDelete && (
+                                <DropdownMenuItem
+                                  onClick={() => onDelete(row)}
+                                  className="gap-2 text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      )}
+                    </motion.tr>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
 
-            {/* Enhanced Mobile View */}
-            <MobileView />
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Enhanced Mobile View */}
+        <MobileView />
+      </motion.div>
 
       {/* Enhanced Results Footer */}
       <motion.div
