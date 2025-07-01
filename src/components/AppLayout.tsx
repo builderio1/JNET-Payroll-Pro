@@ -117,6 +117,13 @@ const navigationItems = [
     description: "Execute and monitor payroll processing",
     color: "from-emerald-500 to-teal-500",
   },
+  {
+    title: "Statutory Components",
+    path: "/statutory-settings",
+    icon: Settings,
+    description: "Configure PF, PT, ESIC, and other statutory settings",
+    color: "from-amber-500 to-yellow-500",
+  },
 ];
 
 const sidebarVariants = {
