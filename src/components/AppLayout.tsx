@@ -97,13 +97,6 @@ const navigationItems = [
     color: "from-rose-500 to-pink-500",
   },
   {
-    title: "PT Configuration",
-    path: "/pt-config",
-    icon: CreditCard,
-    description: "Configure Professional Tax settings",
-    color: "from-amber-500 to-orange-500",
-  },
-  {
     title: "Pay Schedule",
     path: "/pay-schedule",
     icon: Calendar,
